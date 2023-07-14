@@ -1,0 +1,117 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<snippets>
+   <group category="PG" language="PLSQL">
+      <snippet name="pg_example" description="">
+         <code>
+            <![CDATA[
+DO $$
+BEGIN
+    RAISE NOTICE '%', CASE 2+2 WHEN 4 THEN 'All is good' END;
+END;
+$$;
+]]>
+         </code>
+      </snippet>
+      <snippet name="airport разобрать скурпулезно" description="">
+         <code>
+            <![CDATA[explain (costs off)
+    SELECT *
+      FROM flights f
+      JOIN airports_data dep ON f.departure_airport = dep.airport_code
+    ORDER BY dep.airport_code;
+    
+explain (costs off)
+    SELECT *
+      FROM flights f
+      JOIN airports_data dep ON f.departure_airport = dep.airport_code;
+    --ORDER BY dep.airport_code;
+    
+select *
+  from pg_index;
+
+-- columns  
+SELECT table_name, 
+       column_name, 
+       data_type, 
+       character_maximum_length, 
+       column_default, 
+       is_nullable
+FROM information_schema.columns 
+WHERE table_name = 'airports_data';
+
+-- ddl generation
+SELECT                                          
+  'CREATE TABLE ' || relname || E'\n(\n' ||
+  array_to_string(
+    array_agg(
+      '    ' || column_name || ' ' ||  type || ' '|| not_null
+    )
+    , E',\n'
+  ) || E'\n);\n'
+from
+(
+  SELECT 
+    c.relname, a.attname AS column_name,
+    pg_catalog.format_type(a.atttypid, a.atttypmod) as type,
+    case 
+      when a.attnotnull
+    then 'NOT NULL'
+    else 'NULL'
+    END as not_null 
+  FROM pg_class c,
+   pg_attribute a,
+   pg_type t
+   WHERE c.relname = 'airports_data'
+   AND a.attnum > 0
+   AND a.attrelid = c.oid
+   AND a.atttypid = t.oid
+ ORDER BY a.attnum
+) as tabledefinition
+group by relname
+;
+
+select pg_get_viewdef('airports_data'::regclass, true);
+
+-- index DDL by table
+SELECT pi.*,
+      pg_get_indexdef(indexrelid) AS index_query
+FROM pg_index pi 
+WHERE  indrelid = 'airports_data'::regclass;
+
+SELECT pg_get_indexdef('airports_data'::regclass);
+
+select *
+  from pg_class
+  where oid in (16703, 16652);
+  
+  
+SELECT pg_get_indexdef('airports_data_pkey'::regclass);
+
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="cat_name" language="PLSQL">
+      <snippet name="b_snip" description="">
+         <code>
+            <![CDATA[
+AAAAAA
+]]>
+         </code>
+      </snippet>
+      <snippet name="a_snip" description="">
+         <code>
+            <![CDATA[
+BBBBB
+]]>
+         </code>
+      </snippet>
+   <snippet name="c_snip" description="">
+         <code>
+            <![CDATA[
+CCCCC
+]]>
+         </code>
+      </snippet>
+   </group>
+</snippets>
