@@ -110,6 +110,10 @@ BBBBB
          <code>
             <![CDATA[
 CCCCC
+
+BEGIN
+  DO SOMETHING;
+END;
 ]]>
          </code>
       </snippet>

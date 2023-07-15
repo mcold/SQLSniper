@@ -40,13 +40,5 @@ func get_snippets(fileURI string) Snippets {
 
 	xml.Unmarshal(byteValue, &snippets)
 
-	// for i := 0; i < len(snippets.Groups); i++ {
-	// 	fmt.Println("Category: " + snippets.Groups[i].Category)
-	// 	for j := 0; j < len(snippets.Groups[i].Snippets); j++ {
-	// 		fmt.Println("Snippet name: " + snippets.Groups[i].Snippets[j].Name)
-	// 		fmt.Println("Snippets code: " + snippets.Groups[i].Snippets[j].Code)
-	// 	}
-	// }
-
 	return snippets
 }

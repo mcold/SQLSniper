@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -15,11 +14,14 @@ import (
 
 type config struct {
 	EditWidget   *widget.Entry
+	FilterWidget *widget.Entry
+	Btn          *widget.Button
 	ListSnip     *widget.List
 	ListGroup    *widget.List
 	CurrentFile  fyne.URI
 	SaveMenuItem *fyne.MenuItem
 	Snips        Snippets
+	SnipsDefault Snippets
 	IDGroup      int
 	IDSnip       int
 	WhoActive    string
@@ -32,16 +34,16 @@ func main() {
 
 	win := a.NewWindow("Sniper")
 
-	edit, l_snips, l_groups := cfg.makeUI()
+	filter, btn, edit, l_snips, l_groups := cfg.makeUI()
 	cfg.createMenuItems(win)
 
 	// set the content of the window
-	win.SetContent(container.NewHSplit(l_groups, container.NewHSplit(l_snips, edit)))
-
+	win.SetContent(container.NewHSplit(container.NewVSplit(l_groups, container.NewVBox(filter, btn)), container.NewHSplit(l_snips, edit)))
 	cfg.WhoActive = "Group"
 
 	cfg.setArrows(win)
 
+	cfg.SnipsDefault = cfg.Snips
 	win.Resize(fyne.Size{Width: 800, Height: 500})
 	win.CenterOnScreen()
 	win.ShowAndRun()
@@ -49,6 +51,7 @@ func main() {
 
 func (app *config) setArrows(win fyne.Window) {
 	win.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
+		// fmt.Println(k.Name)
 		switch k.Name {
 		case "Up":
 			{
@@ -121,6 +124,7 @@ func (app *config) setArrows(win fyne.Window) {
 				case "Snip":
 					{
 						app.WhoActive = "Group"
+						app.ListSnip.UnselectAll()
 					}
 				case "Edit":
 					{
@@ -128,7 +132,6 @@ func (app *config) setArrows(win fyne.Window) {
 					}
 				}
 			}
-
 		}
 
 	})
@@ -150,6 +153,10 @@ func (app *config) refreshGroup(id int) {
 	// app.refreshSnip(app.IDSnip)
 }
 
+func (app *config) refreshFilter(token string) {
+	app.WhoActive = "Filter"
+}
+
 func (app *config) refreshSnip(id int) {
 	app.WhoActive = "Snip"
 	app.IDSnip = id
@@ -157,11 +164,15 @@ func (app *config) refreshSnip(id int) {
 	app.EditWidget.Refresh()
 }
 
-func (app *config) makeUI() (*widget.Entry, *widget.List, *widget.List) {
+func (app *config) makeUI() (*widget.Entry, *widget.Button, *widget.Entry, *widget.List, *widget.List) {
 
 	app.Snips = get_snippets("UserSnippets.xml")
 
+	filter := widget.NewEntry()
+	// filter.SetText("Search by content...")
+	btn := widget.NewButton("Find", func() { app.searchFilter(app.FilterWidget.Text) })
 	edit := widget.NewMultiLineEntry()
+
 	edit.Wrapping = fyne.TextWrapWord
 	edit.Resize(fyne.NewSize(600, 600))
 	edit.SetText("")
@@ -191,12 +202,15 @@ func (app *config) makeUI() (*widget.Entry, *widget.List, *widget.List) {
 
 	l_groups.OnSelected = app.refreshGroup
 	l_snips.OnSelected = app.refreshSnip
+	filter.OnChanged = app.refreshFilter
 
+	app.FilterWidget = filter
+	app.Btn = btn
 	app.EditWidget = edit
 	app.ListSnip = l_snips
 	app.ListGroup = l_groups
 
-	return edit, l_snips, l_groups
+	return filter, btn, edit, l_snips, l_groups
 }
 
 func (app *config) createMenuItems(win fyne.Window) {
@@ -262,7 +276,7 @@ func (app *config) openFunc(win fyne.Window) func() {
 			win.SetTitle(win.Title() + " - " + read.URI().Name())
 			app.SaveMenuItem.Disabled = false
 
-			fmt.Println(app.CurrentFile.Name())
+			// fmt.Println(app.CurrentFile.Name())
 
 		}, win)
 
@@ -303,4 +317,55 @@ func (app *config) saveAsFunc(win fyne.Window) func() {
 		saveDialog.SetFilter(filter)
 		saveDialog.Show()
 	}
+}
+
+func (app *config) searchFilter(token string) {
+	if token == "" {
+		app.Snips = app.SnipsDefault
+		app.IDGroup = 0
+		app.IDSnip = 0
+		app.ListSnip.UnselectAll()
+		app.refreshGroup(0)
+		app.ListGroup.Select(0)
+		return
+	}
+
+	app.Snips = app.SnipsDefault
+	var newSnippets Snippets
+	newSnippets.XMLName = app.Snips.XMLName
+	for gi, gel := range app.Snips.Groups {
+		var newGidx int
+		var newG Group
+		newGidx = -1
+		for si, sel := range app.Snips.Groups[gi].Snips {
+			if strings.Contains(strings.ToLower((app.Snips.Groups[gi].Snips[si].Code)), strings.ToLower(token)) {
+
+				if newGidx == -1 {
+					newGidx = gi
+					newG.XMLName = gel.XMLName
+					newG.Category = gel.Category
+					newG.Language = gel.Language
+				}
+				newG.Snips = append(newG.Snips, sel)
+			}
+
+		}
+		if newGidx != -1 {
+			newSnippets.Groups = append(newSnippets.Groups, newG)
+		}
+	}
+
+	if len(newSnippets.Groups) != 0 {
+		app.Snips = newSnippets
+	} else {
+		app.Snips = app.SnipsDefault
+		app.FilterWidget.SetText("")
+	}
+	app.IDGroup = 0
+	app.IDSnip = 0
+	app.ListGroup.UnselectAll()
+	app.ListSnip.UnselectAll()
+
+	app.refreshGroup(0)
+	app.ListGroup.Select(0)
 }
