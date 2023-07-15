@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -48,48 +49,88 @@ func main() {
 
 func (app *config) setArrows(win fyne.Window) {
 	win.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
-		if k.Name == "Up" {
-			if cfg.WhoActive == "Group" {
-				newID := cfg.IDGroup - 1
-				if newID >= 0 {
-					cfg.IDGroup = newID
-					cfg.ListGroup.Select(cfg.IDGroup)
-					cfg.IDSnip = 0
-					cfg.EditWidget.SetText(cfg.Snips.Groups[cfg.IDGroup].Snips[cfg.IDSnip].Code)
-					cfg.EditWidget.Refresh()
-				}
-			} else if cfg.WhoActive == "Snip" {
-				newID := cfg.IDSnip - 1
-				if newID >= 0 {
-					cfg.IDSnip = newID
-					cfg.ListSnip.Select(cfg.IDSnip)
-					cfg.EditWidget.SetText(cfg.Snips.Groups[cfg.IDGroup].Snips[cfg.IDSnip].Code)
-					cfg.EditWidget.Refresh()
-				}
-			}
-		}
-		if k.Name == "Down" {
-			if cfg.WhoActive == "Group" {
-				newID := cfg.IDGroup + 1
-				if cfg.ListGroup.Length() > newID {
-					cfg.IDGroup = newID
-					cfg.IDSnip = 0
-					cfg.ListGroup.Select(cfg.IDGroup)
-					cfg.EditWidget.SetText(cfg.Snips.Groups[cfg.IDGroup].Snips[cfg.IDSnip].Code)
-					cfg.EditWidget.Refresh()
-				}
-
-			} else if cfg.WhoActive == "Snip" {
-				newID := cfg.IDSnip + 1
-				if cfg.ListSnip.Length() > newID {
-					cfg.IDSnip = newID
-					cfg.ListSnip.Select(cfg.IDSnip)
-					cfg.EditWidget.SetText(cfg.Snips.Groups[cfg.IDGroup].Snips[cfg.IDSnip].Code)
-					cfg.EditWidget.Refresh()
+		switch k.Name {
+		case "Up":
+			{
+				if app.WhoActive == "Group" {
+					newID := app.IDGroup - 1
+					if newID >= 0 {
+						app.IDGroup = newID
+						app.ListGroup.Select(app.IDGroup)
+						app.IDSnip = 0
+						app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
+						app.EditWidget.Refresh()
+					}
+				} else if app.WhoActive == "Snip" {
+					newID := app.IDSnip - 1
+					if newID >= 0 {
+						app.IDSnip = newID
+						app.ListSnip.Select(app.IDSnip)
+						app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
+						app.EditWidget.Refresh()
+					}
 				}
 			}
+		case "Down":
+			{
+				if app.WhoActive == "Group" {
+					newID := app.IDGroup + 1
+					if app.ListGroup.Length() > newID {
+						app.IDGroup = newID
+						app.IDSnip = 0
+						app.ListGroup.Select(app.IDGroup)
+						app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
+						app.EditWidget.Refresh()
+					}
+
+				} else if app.WhoActive == "Snip" {
+					newID := app.IDSnip + 1
+					if app.ListSnip.Length() > newID {
+						app.IDSnip = newID
+						app.ListSnip.Select(app.IDSnip)
+						app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
+						app.EditWidget.Refresh()
+					}
+				}
+
+			}
+		case "Right":
+			{
+
+				switch app.WhoActive {
+				case "Group":
+					{
+						app.WhoActive = "Snip"
+						app.IDSnip = 0
+						app.ListSnip.Select(app.IDSnip)
+						app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
+						app.EditWidget.Refresh()
+					}
+				case "Snip":
+					{
+						app.WhoActive = "Edit"
+						app.EditWidget.SelectedText()
+						app.EditWidget.Enable()
+					}
+				}
+
+			}
+		case "Left":
+			{
+				switch app.WhoActive {
+				case "Snip":
+					{
+						app.WhoActive = "Group"
+					}
+				case "Edit":
+					{
+						app.WhoActive = "Snip"
+					}
+				}
+			}
 
 		}
+
 	})
 }
 
@@ -118,7 +159,7 @@ func (app *config) refreshSnip(id int) {
 
 func (app *config) makeUI() (*widget.Entry, *widget.List, *widget.List) {
 
-	app.Snips = get_snippets()
+	app.Snips = get_snippets("UserSnippets.xml")
 
 	edit := widget.NewMultiLineEntry()
 	edit.Wrapping = fyne.TextWrapWord
@@ -217,8 +258,11 @@ func (app *config) openFunc(win fyne.Window) func() {
 			app.EditWidget.SetText(string(data))
 
 			app.CurrentFile = read.URI()
+			app.Snips = get_snippets(app.CurrentFile.Name())
 			win.SetTitle(win.Title() + " - " + read.URI().Name())
 			app.SaveMenuItem.Disabled = false
+
+			fmt.Println(app.CurrentFile.Name())
 
 		}, win)
 

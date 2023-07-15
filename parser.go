@@ -26,8 +26,8 @@ type Snippet struct {
 	Code        string   `xml:"code"`
 }
 
-func get_snippets() Snippets {
-	xmlFile, err := os.Open("UserSnippets.xml")
+func get_snippets(fileURI string) Snippets {
+	xmlFile, err := os.Open(fileURI)
 	if err != nil {
 		fmt.Println(err)
 	}
