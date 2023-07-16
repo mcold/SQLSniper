@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"sort"
+	"strings"
 )
 
 type Snippets struct {
@@ -39,6 +41,18 @@ func get_snippets(fileURI string) Snippets {
 	var snippets Snippets
 
 	xml.Unmarshal(byteValue, &snippets)
+
+	// sorting groups
+	sort.Slice(snippets.Groups, func(i, j int) bool {
+		return strings.ToLower(snippets.Groups[i].Category) < strings.ToLower(snippets.Groups[j].Category)
+	})
+
+	// sorting snippets
+	for gi := range snippets.Groups {
+		sort.Slice(snippets.Groups[gi].Snips, func(i, j int) bool {
+			return snippets.Groups[gi].Snips[i].Name < snippets.Groups[gi].Snips[j].Name
+		})
+	}
 
 	return snippets
 }

@@ -92,6 +92,13 @@ SELECT pg_get_indexdef('airports_data_pkey'::regclass);
       </snippet>
    </group>
    <group category="cat_name" language="PLSQL">
+      <snippet name="d_snip" description="">
+         <code>
+            <![CDATA[
+DDDDD
+]]>
+         </code>
+      </snippet>
       <snippet name="b_snip" description="">
          <code>
             <![CDATA[
