@@ -6,6 +6,7 @@ import (
 )
 
 func (app *config) refreshFilter(token string) {
+	app.Snips = app.SnipsDefault
 	app.WhoActive = "Filter"
 }
 
