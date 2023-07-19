@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+var xmlStart string
+
 type Snippets struct {
 	XMLName xml.Name `xml:"snippets"`
 	Groups  []Group  `xml:"group"`
@@ -55,4 +57,21 @@ func get_snippets(fileURI string) Snippets {
 	}
 
 	return snippets
+}
+
+func replace_content(fileURI string) {
+	xmlStart = "<?xml version = '1.0' encoding = 'UTF-8'?>"
+
+	contents, _ := ioutil.ReadFile(fileURI)
+	contents = []byte(strings.Replace(string(contents), "<code>&#xA;            &#xA;", "<code>\n<![CDATA[\n", 100500))
+	contents = []byte(strings.Replace(string(contents), "<code>&#xA;            ", "<code>\n<![CDATA[\n", 100500))
+	contents = []byte(strings.Replace(string(contents), "<code>&#xA;", "<code>\n<![CDATA[\n", 100500))
+	contents = []byte(strings.Replace(string(contents), "&#xA;&#xA;         </code>", "]]>\n</code>", 100500))
+	contents = []byte(strings.Replace(string(contents), "&#xA;         </code>", "]]>\n</code>", 100500))
+	contents = []byte(strings.Replace(string(contents), "&#xA;", "\n", 100500))
+	contents = []byte(strings.Replace(string(contents), "&#39;", "'", 100500))
+
+	contents = []byte(xmlStart + "\n" + string(contents))
+
+	ioutil.WriteFile(fileURI, contents, 0644)
 }

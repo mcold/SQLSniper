@@ -73,18 +73,11 @@ func (app *config) openFunc(win fyne.Window) func() {
 			app.EditWidget.SetText(string(data))
 
 			app.CurrentFile = read.URI()
+			app.PathFile = read.URI().Path()
+
 			app.Snips = get_snippets(app.CurrentFile.Name())
 			win.SetTitle(win.Title() + " - " + read.URI().Name())
 			app.SaveMenuItem.Disabled = false
-
-			// save application config
-
-			// read config
-			// if _, err := toml.DecodeFile("conf.toml", &appCfg); err != nil {
-			// 	fmt.Println("Error!")
-			// }
-
-			// fmt.Println(app.CurrentFile.Name())
 
 		}, win)
 
@@ -125,11 +118,14 @@ func (app *config) saveAsFunc(win fyne.Window) func() {
 			////////////////////////
 
 			app.CurrentFile = write.URI()
+			app.PathFile = write.URI().Path()
 
 			defer write.Close()
 
 			win.SetTitle(win.Title() + " - " + write.URI().Name())
 			app.SaveMenuItem.Disabled = false
+
+			replace_content(app.PathFile)
 
 		}, win)
 		saveDialog.SetFileName("UserSnippets.xml")

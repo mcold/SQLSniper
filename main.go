@@ -14,6 +14,7 @@ type config struct {
 	ListSnip     *widget.List
 	ListGroup    *widget.List
 	CurrentFile  fyne.URI
+	PathFile     string
 	SaveMenuItem *fyne.MenuItem
 	Snips        Snippets
 	SnipsDefault Snippets
@@ -52,8 +53,9 @@ func main() {
 
 	winMove := a.NewWindow("Move Snippet")
 	l_groups_move := cfg.makeUI_move(winMove)
-	winMove.Resize(fyne.Size{Width: 200, Height: 400})
-	winMove.SetContent(container.NewVSplit(l_groups_move, widget.NewLabel("some")))
+	winMove.Resize(fyne.Size{Width: 320, Height: 400})
+	// winMove.SetContent(container.NewVSplit(l_groups_move, widget.NewLabel("some")))
+	winMove.SetContent(l_groups_move)
 
 	cfg.winMove = winMove
 	// cfg.winMove.CenterOnScreen()
