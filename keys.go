@@ -70,8 +70,10 @@ func (app *config) setKeys(win fyne.Window) {
 				case "Snip":
 					{
 						app.WhoActive = "Edit"
-						app.EditWidget.SelectedText()
 						app.EditWidget.Enable()
+						app.EditWidget.Refresh()
+						fmt.Println(app.EditWidget.CursorRow)
+
 					}
 				}
 

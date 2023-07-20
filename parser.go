@@ -59,17 +59,23 @@ func get_snippets(fileURI string) Snippets {
 	return snippets
 }
 
+func (app *config) retrim() {
+	// trim leading / tailing spaces
+	for gi := range app.Snips.Groups {
+		for si := range app.Snips.Groups[gi].Snips {
+			app.Snips.Groups[gi].Snips[si].Code = strings.TrimSpace(app.Snips.Groups[gi].Snips[si].Code)
+		}
+	}
+}
+
 func replace_content(fileURI string) {
 	xmlStart = "<?xml version = '1.0' encoding = 'UTF-8'?>"
 
 	contents, _ := ioutil.ReadFile(fileURI)
-	contents = []byte(strings.Replace(string(contents), "<code>&#xA;            &#xA;", "<code>\n<![CDATA[\n", 100500))
-	contents = []byte(strings.Replace(string(contents), "<code>&#xA;            ", "<code>\n<![CDATA[\n", 100500))
-	contents = []byte(strings.Replace(string(contents), "<code>&#xA;", "<code>\n<![CDATA[\n", 100500))
-	contents = []byte(strings.Replace(string(contents), "&#xA;&#xA;         </code>", "]]>\n</code>", 100500))
-	contents = []byte(strings.Replace(string(contents), "&#xA;         </code>", "]]>\n</code>", 100500))
 	contents = []byte(strings.Replace(string(contents), "&#xA;", "\n", 100500))
 	contents = []byte(strings.Replace(string(contents), "&#39;", "'", 100500))
+	contents = []byte(strings.Replace(string(contents), "<code>", "<code><![CDATA[\n", 100500))
+	contents = []byte(strings.Replace(string(contents), "</code>", "]]>\n</code>", 100500))
 
 	contents = []byte(xmlStart + "\n" + string(contents))
 

@@ -37,6 +37,7 @@ var filter = storage.NewExtensionFileFilter([]string{".xml", ".XML"})
 
 func (app *config) saveFunc(win fyne.Window) func() {
 	return func() {
+		app.retrim()
 		if app.CurrentFile != nil {
 			write, err := storage.Writer(app.CurrentFile)
 			if err != nil {
@@ -76,6 +77,7 @@ func (app *config) openFunc(win fyne.Window) func() {
 			app.PathFile = read.URI().Path()
 
 			app.Snips = get_snippets(app.CurrentFile.Name())
+			app.retrim()
 			win.SetTitle(win.Title() + " - " + read.URI().Name())
 			app.SaveMenuItem.Disabled = false
 
@@ -88,6 +90,7 @@ func (app *config) openFunc(win fyne.Window) func() {
 
 func (app *config) saveAsFunc(win fyne.Window) func() {
 	return func() {
+		app.retrim()
 		saveDialog := dialog.NewFileSave(func(write fyne.URIWriteCloser, err error) {
 			if err != nil {
 				dialog.ShowError(err, win)

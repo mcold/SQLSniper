@@ -12,6 +12,8 @@ func (app *config) makeUI() (*widget.Entry, *widget.Button, *widget.Entry, *widg
 
 	app.Snips = get_snippets("UserSnippets.xml")
 
+	app.retrim()
+
 	filter := widget.NewEntry()
 	btn := widget.NewButton("Find", func() { app.searchFilter(app.FilterWidget.Text) })
 	edit := widget.NewMultiLineEntry()
