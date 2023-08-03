@@ -9,7 +9,7 @@ import (
 
 func (app *config) setKeys(win fyne.Window) {
 	win.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
-		// fmt.Println(k.Name)
+		fmt.Println(k.Name)
 		switch k.Name {
 		case "Up":
 			{
@@ -66,13 +66,14 @@ func (app *config) setKeys(win fyne.Window) {
 						app.ListSnip.Select(app.IDSnip)
 						app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
 						app.EditWidget.Refresh()
+						app.EditWidget.SelectedText()
 					}
 				case "Snip":
 					{
 						app.WhoActive = "Edit"
 						app.EditWidget.Enable()
 						app.EditWidget.Refresh()
-						fmt.Println(app.EditWidget.CursorRow)
+						// fmt.Println(app.EditWidget.CursorRow)
 
 					}
 				}
@@ -92,9 +93,88 @@ func (app *config) setKeys(win fyne.Window) {
 					}
 				}
 			}
-		}
+		case "Delete":
+			{
+				switch app.WhoActive {
+				case "Snip":
+					{
+						if app.IDSnip+1 > len(app.Snips.Groups[app.IDGroup].Snips) {
+							app.Snips.Groups[app.IDGroup].Snips = app.Snips.Groups[app.IDGroup].Snips[:app.IDSnip]
+						} else {
+							app.Snips.Groups[app.IDGroup].Snips = append(app.Snips.Groups[app.IDGroup].Snips[:app.IDSnip], app.Snips.Groups[app.IDGroup].Snips[app.IDSnip+1:]...)
+						}
 
-	})
+						app.ListSnip.Refresh()
+						app.EditWidget.Refresh()
+					}
+				case "Edit":
+					{
+						if app.IDSnip+1 > len(app.Snips.Groups[app.IDGroup].Snips) {
+							app.Snips.Groups[app.IDGroup].Snips = app.Snips.Groups[app.IDGroup].Snips[:app.IDSnip]
+						} else {
+							app.Snips.Groups[app.IDGroup].Snips = append(app.Snips.Groups[app.IDGroup].Snips[:app.IDSnip], app.Snips.Groups[app.IDGroup].Snips[app.IDSnip+1:]...)
+						}
+						app.ListSnip.Refresh()
+						app.EditWidget.Refresh()
+					}
+				case "Group":
+					{
+						if app.IDGroup+1 > app.ListGroup.Length() {
+							app.Snips.Groups = app.Snips.Groups[:app.IDGroup]
+
+							app.IDGroup = app.IDGroup - 1
+							app.ListGroup.Select(app.IDGroup)
+						} else {
+							app.Snips.Groups = append(app.Snips.Groups[:app.IDGroup], app.Snips.Groups[app.IDGroup+1:]...)
+
+							app.IDGroup = app.IDGroup - 1
+							app.ListGroup.Select(app.IDGroup)
+						}
+
+						app.ListGroup.Refresh()
+						app.ListSnip.Refresh()
+						app.EditWidget.Refresh()
+					}
+				}
+
+			}
+		case "Insert":
+			{
+				switch app.WhoActive {
+				case "Snip":
+					{
+						app.winSnIns.CenterOnScreen()
+						app.winSnIns.Show()
+					}
+				case "Group":
+					{
+						app.winGrIns.CenterOnScreen()
+						app.winGrIns.Show()
+
+					}
+				}
+			}
+		case "F2":
+			{
+				switch app.WhoActive {
+				case "Snip":
+					{
+						//fmt.Println(app.Snips.Groups[app.IDGroup].Category)
+						app.NewNameEdit.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Name)
+						app.winNewName.CenterOnScreen()
+						app.winNewName.Show()
+					}
+				case "Group":
+					{
+						app.NewNameEdit.SetText(app.Snips.Groups[app.IDGroup].Category)
+						app.winNewName.CenterOnScreen()
+						app.winNewName.Show()
+					}
+				}
+			}
+		}
+	},
+	)
 }
 
 func (app *config) setKeysMove(win fyne.Window) {
@@ -113,7 +193,7 @@ func (app *config) setKeysMove(win fyne.Window) {
 
 				if down_range < 0 {
 					if up_range > len(app.Snips.Groups[app.IDGroup].Snips) {
-						fmt.Println("THE END!!!")
+						// fmt.Println("THE END!!!")
 						if app.IDGroup+1 > app.ListGroup.Length() {
 							app.Snips.Groups = app.Snips.Groups[app.IDGroup:]
 							app.IDGroupMove = app.IDGroupMove - 1

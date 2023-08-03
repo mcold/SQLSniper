@@ -76,6 +76,102 @@ func (app *config) makeUI_move(win fyne.Window) *widget.List {
 	return l_groups
 }
 
+func (app *config) makeUI_groupIns(win fyne.Window) (*widget.Label, *widget.Entry, *widget.Button) {
+	label := widget.NewLabel("Group name: ")
+	edit := widget.NewEntry()
+	edit.Resize(fyne.NewSize(50, 200))
+	btn := widget.NewButton("Ok", func() {
+		gr := Group{Category: edit.Text, Language: "PLSQL"}
+		app.Snips.Groups = append(app.Snips.Groups, gr)
+		app.IDGroup = app.IDGroup + 1
+		app.NewGroupEdit.SetText("")
+		app.resortGroups()
+		app.ListGroup.Refresh()
+		app.winGrIns.Hide()
+	})
+
+	app.NewGroupEdit = edit
+
+	return label, edit, btn
+}
+
+func (app *config) makeUINewName(win fyne.Window) (*widget.Entry, *widget.Button) {
+
+	edit := widget.NewEntry()
+	edit.Resize(fyne.NewSize(50, 200))
+	btn := widget.NewButton("Ok", func() {
+		// TODO: if not nil
+		switch app.WhoActive {
+		case "Snip":
+			{
+				app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Name = edit.Text
+				app.resortSnips()
+				app.ListSnip.Refresh()
+				app.ListSnip.Select(app.IDSnip)
+			}
+		case "Group":
+			{
+				app.Snips.Groups[app.IDGroup].Category = edit.Text
+				app.resortGroups()
+				app.ListGroup.Refresh()
+				app.ListGroup.Select(app.IDGroup)
+			}
+		}
+		app.winNewName.Hide()
+	})
+
+	app.NewNameEdit = edit
+
+	return edit, btn
+
+}
+
+func (app *config) makeUI_snipIns(win fyne.Window) (*widget.List, *widget.Label, *widget.Entry, *widget.Label, *widget.Entry, *widget.Button) {
+	l_groups := widget.NewList(
+		func() int {
+			return len(app.Snips.Groups)
+		},
+		func() fyne.CanvasObject {
+			return container.NewHBox(widget.NewLabel(""))
+		},
+		func(idg widget.ListItemID, obj fyne.CanvasObject) {
+			obj.(*fyne.Container).Objects[0].(*widget.Label).SetText(app.Snips.Groups[idg].Category)
+		},
+	)
+	l_groups.OnSelected = app.refreshGroupInsSnip
+
+	labelGr := widget.NewLabel("New group name: ")
+	editGr := widget.NewEntry()
+	editGr.Resize(fyne.NewSize(50, 200))
+	labelSn := widget.NewLabel("New snippet name: ")
+	editSn := widget.NewEntry()
+	editSn.Resize(fyne.NewSize(50, 200))
+	btn := widget.NewButton("Ok", func() {
+		if editSn.Text != "" {
+			app.Snips.Groups[app.IDGroup].Snips = append(app.Snips.Groups[app.IDGroup].Snips, Snippet{Name: editSn.Text})
+			app.resortSnips()
+			if editGr.Text != "" {
+				app.Snips.Groups = append(app.Snips.Groups, Group{Category: editGr.Text, Language: "PLSQL"})
+				app.setGroupByName(editGr.Text)
+				app.resortGroups()
+			} else {
+				app.IDGroup = app.IDGroupNewSnip
+			}
+			app.ListGroup.Refresh()
+		}
+
+		app.NewGroupEdit.SetText("")
+		app.NewSnipEdit.SetText("")
+		app.winSnIns.Hide()
+
+	})
+
+	app.NewGroupEdit = editGr
+	app.NewSnipEdit = editSn
+
+	return l_groups, labelGr, editGr, labelSn, editSn, btn
+}
+
 func (app *config) searchFilter(token string) {
 	if token == "" {
 		app.Snips = app.SnipsDefault

@@ -36,6 +36,31 @@ func (app *config) refreshGroupMove(id int) {
 	app.IDGroupMove = id
 }
 
+func (app *config) refreshGroupInsSnip(id int) {
+	app.WhoActive = "GroupInsSnip"
+	app.IDGroupNewSnip = id
+}
+
 func (app *config) refreshEdit(str string) {
 	app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code = str
+}
+
+func (app *config) getGroupByName(str string) int {
+	var out_var int
+	for idx, el := range app.Snips.Groups {
+		if el.Category == str {
+			out_var = idx
+			break
+		}
+	}
+	return out_var
+}
+
+func (app *config) setGroupByName(str string) {
+	for idx, el := range app.Snips.Groups {
+		if el.Category == str {
+			app.IDGroup = idx
+			break
+		}
+	}
 }

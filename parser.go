@@ -68,6 +68,20 @@ func (app *config) retrim() {
 	}
 }
 
+func (app *config) resortGroups() {
+	sort.Slice(app.Snips.Groups, func(i, j int) bool {
+		return strings.ToLower(app.Snips.Groups[i].Category) < strings.ToLower(app.Snips.Groups[j].Category)
+	})
+}
+
+func (app *config) resortSnips() {
+	for gi := range app.Snips.Groups {
+		sort.Slice(app.Snips.Groups[gi].Snips, func(i, j int) bool {
+			return app.Snips.Groups[gi].Snips[i].Name < app.Snips.Groups[gi].Snips[j].Name
+		})
+	}
+}
+
 func replace_content(fileURI string) {
 	xmlStart = "<?xml version = '1.0' encoding = 'UTF-8'?>"
 
