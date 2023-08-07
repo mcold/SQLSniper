@@ -211,7 +211,7 @@ func (app *config) setKeysMove(win fyne.Window) {
 					if up_range > len(app.Snips.Groups[app.IDGroup].Snips) {
 						app.Snips.Groups[app.IDGroup].Snips = app.Snips.Groups[app.IDGroup].Snips[down_range:app.IDSnip]
 					} else {
-						left_arr, right_arr := app.Snips.Groups[app.IDGroup].Snips[down_range:app.IDSnip], app.Snips.Groups[app.IDGroup].Snips[up_range:]
+						left_arr, right_arr := app.Snips.Groups[app.IDGroup].Snips[:app.IDSnip], app.Snips.Groups[app.IDGroup].Snips[up_range:]
 						app.Snips.Groups[app.IDGroup].Snips = append(left_arr, right_arr...)
 					}
 				}
@@ -258,6 +258,39 @@ func (app *config) setKeysMove(win fyne.Window) {
 				}
 
 				app.Snips.Groups[app.IDGroupMove].Snips = append(app.Snips.Groups[app.IDGroupMove].Snips, snip)
+				app.refreshGroup(app.IDGroupMove)
+				app.ListGroup.Refresh()
+				win.Hide()
+			}
+
+		}
+	})
+}
+
+func (app *config) setKeysGrMove(win fyne.Window) {
+	// TODO: not show current group
+	win.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
+		fmt.Println(k.Name)
+		switch k.Name {
+		case "KP_Enter":
+			{
+				for i := range app.Snips.Groups[app.IDGroup].Snips {
+					app.Snips.Groups[app.IDGroupMove].Snips = append(app.Snips.Groups[app.IDGroupMove].Snips, app.Snips.Groups[app.IDGroup].Snips[i])
+				}
+
+				app.Snips.Groups = append(app.Snips.Groups[:app.IDGroup], app.Snips.Groups[app.IDGroup+1:]...)
+				app.refreshGroup(app.IDGroupMove)
+				app.ListGroup.Refresh()
+				win.Hide()
+
+			}
+		case "Return":
+			{
+				for i := range app.Snips.Groups[app.IDGroup].Snips {
+					app.Snips.Groups[app.IDGroupMove].Snips = append(app.Snips.Groups[app.IDGroupMove].Snips, app.Snips.Groups[app.IDGroup].Snips[i])
+				}
+
+				app.Snips.Groups = append(app.Snips.Groups[:app.IDGroup], app.Snips.Groups[app.IDGroup+1:]...)
 				app.refreshGroup(app.IDGroupMove)
 				app.ListGroup.Refresh()
 				win.Hide()

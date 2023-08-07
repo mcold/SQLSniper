@@ -24,6 +24,7 @@ type config struct {
 	IDSnip         int
 	WhoActive      string
 	winMove        fyne.Window
+	winGrMove      fyne.Window
 	winGrIns       fyne.Window
 	winSnIns       fyne.Window
 	winNewName     fyne.Window
@@ -65,6 +66,13 @@ func main() {
 
 	cfg.winMove = winMove
 
+	winGrMove := a.NewWindow("Group move")
+	l_group_move := cfg.makeUIGrMove(winGrMove)
+	winGrMove.Resize(fyne.Size{Width: 320, Height: 400})
+	winGrMove.SetContent(l_group_move)
+
+	cfg.winGrMove = winGrMove
+
 	winGroupIns := a.NewWindow("New Group")
 	GrLabel, GrEdit, GrBtn := cfg.makeUI_groupIns(winGroupIns)
 	winGroupIns.Resize(fyne.Size{Width: 300, Height: 100})
@@ -102,6 +110,7 @@ func main() {
 
 	cfg.setKeys(win)
 	cfg.setKeysMove(winMove)
+	cfg.setKeysGrMove(winGrMove)
 
 	cfg.SnipsDefault = cfg.Snips
 	win.Resize(fyne.Size{Width: 800, Height: 500})

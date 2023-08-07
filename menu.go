@@ -21,10 +21,11 @@ func (app *config) createMenuItems(win fyne.Window) {
 
 	// create edit menu items
 	moveMenuItem := fyne.NewMenuItem("Move...", app.moveSnip(win))
+	moveGrMenuItem := fyne.NewMenuItem("Move group...", app.moveGroup(win))
 
 	// create a file menu, and add the three items to it
 	fileMenu := fyne.NewMenu("File", openMenuItem, saveMenuItem, saveAsMenuItem)
-	editMenu := fyne.NewMenu("Edit", moveMenuItem)
+	editMenu := fyne.NewMenu("Edit", moveMenuItem, moveGrMenuItem)
 
 	// create a main menu, and add the file menu to it
 	menu := fyne.NewMainMenu(fileMenu, editMenu)
@@ -141,5 +142,12 @@ func (app *config) moveSnip(win fyne.Window) func() {
 	return func() {
 		app.winMove.CenterOnScreen()
 		app.winMove.Show()
+	}
+}
+
+func (app *config) moveGroup(win fyne.Window) func() {
+	return func() {
+		app.winGrMove.CenterOnScreen()
+		app.winGrMove.Show()
 	}
 }

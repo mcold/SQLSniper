@@ -71,9 +71,27 @@ func (app *config) makeUI_move(win fyne.Window) *widget.List {
 		},
 	)
 
-	l_groups.OnSelected = app.refreshGroupMove
+	l_groups.OnSelected = app.refreshGroupInsSnip
 
 	return l_groups
+}
+
+func (app *config) makeUIGrMove(win fyne.Window) *widget.List {
+	lGroups := widget.NewList(
+		func() int {
+			return len(app.Snips.Groups)
+		},
+		func() fyne.CanvasObject {
+			return container.NewHBox(widget.NewLabel(""))
+		},
+		func(idg widget.ListItemID, obj fyne.CanvasObject) {
+			obj.(*fyne.Container).Objects[0].(*widget.Label).SetText(app.Snips.Groups[idg].Category)
+		},
+	)
+
+	lGroups.OnSelected = app.refreshGroupMove
+
+	return lGroups
 }
 
 func (app *config) makeUI_groupIns(win fyne.Window) (*widget.Label, *widget.Entry, *widget.Button) {

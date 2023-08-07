@@ -125,4 +125,38 @@ END;
          </code>
       </snippet>
    </group>
+   <group category="TD" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+      <snippet name="2_snip" description="">
+         <code>
+            <![CDATA[
+222222
+]]>
+         </code>
+      </snippet>
+      <snippet name="3_snip" description="">
+         <code>
+            <![CDATA[
+33333
+]]>
+         </code>
+      </snippet>
+   <snippet name="4_snip" description="">
+         <code>
+            <![CDATA[
+444444444
+
+BEGIN
+  DO SOMETHING;
+END;
+]]>
+         </code>
+      </snippet>
+   </group>
 </snippets>
