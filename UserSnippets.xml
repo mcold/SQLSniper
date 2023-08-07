@@ -99,21 +99,21 @@ DDDDD
 ]]>
          </code>
       </snippet>
-      <snippet name="b_snip" description="">
+      <snippet name="b_snip" description="some aaa description">
          <code>
             <![CDATA[
 AAAAAA
 ]]>
          </code>
       </snippet>
-      <snippet name="a_snip" description="">
+      <snippet name="a_snip" description="some bbb description">
          <code>
             <![CDATA[
 BBBBB
 ]]>
          </code>
       </snippet>
-   <snippet name="c_snip" description="">
+   <snippet name="c_snip" description="some ccc description">
          <code>
             <![CDATA[
 CCCCC
@@ -155,6 +155,87 @@ END;
 BEGIN
   DO SOMETHING;
 END;
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 1" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 2" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 3" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 4" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 5" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 6" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 7" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 8" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
+]]>
+         </code>
+      </snippet>
+   </group>
+   <group category="MS 9" language="PLSQL">
+      <snippet name="1_snip" description="">
+         <code>
+            <![CDATA[
+11111
 ]]>
          </code>
       </snippet>

@@ -147,6 +147,7 @@ func (app *config) moveSnip(win fyne.Window) func() {
 
 func (app *config) moveGroup(win fyne.Window) func() {
 	return func() {
+		app.GroupsDefault = app.Snips.Groups
 		app.winGrMove.CenterOnScreen()
 		app.winGrMove.Show()
 	}

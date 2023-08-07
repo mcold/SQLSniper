@@ -8,54 +8,40 @@ import (
 )
 
 type config struct {
-	EditWidget     *widget.Entry
-	FilterWidget   *widget.Entry
-	Btn            *widget.Button
-	ListSnip       *widget.List
-	ListGroup      *widget.List
-	CurrentFile    fyne.URI
-	PathFile       string
-	SaveMenuItem   *fyne.MenuItem
-	Snips          Snippets
-	SnipsDefault   Snippets
-	IDGroup        int
-	IDGroupMove    int
-	IDGroupNewSnip int
-	IDSnip         int
-	WhoActive      string
-	winMove        fyne.Window
-	winGrMove      fyne.Window
-	winGrIns       fyne.Window
-	winSnIns       fyne.Window
-	winNewName     fyne.Window
-	NewGroupEdit   *widget.Entry
-	NewSnipEdit    *widget.Entry
-	NewNameEdit    *widget.Entry
+	EditWidget        *widget.Entry
+	EditToolTip       *widget.Entry
+	FilterWidget      *widget.Entry
+	FilterMoveGr      *widget.Entry
+	Btn               *widget.Button
+	ListSnip          *widget.List
+	ListGroup         *widget.List
+	ListGroupMoveToGr *widget.List
+	CurrentFile       fyne.URI
+	PathFile          string
+	SaveMenuItem      *fyne.MenuItem
+	Snips             Snippets
+	SnipsDefault      Snippets
+	GroupsDefault     []Group
+	IDGroup           int
+	IDGroupMove       int
+	IDGroupSnipMove   int
+	IDGroupNewSnip    int
+	IDSnip            int
+	WhoActive         string
+	winMove           fyne.Window
+	winGrMove         fyne.Window
+	winGrIns          fyne.Window
+	winSnIns          fyne.Window
+	winNewName        fyne.Window
+	NewGroupEdit      *widget.Entry
+	NewSnipEdit       *widget.Entry
+	NewNameEdit       *widget.Entry
 }
-
-// type appConfig struct {
-// 	FileURI string
-// 	Title   string
-// }
 
 var cfg config
 
-// var appCfg appConfig
-
 func main() {
 	a := app.New()
-
-	// appCfg, err := toml.LoadFile("config.toml")
-
-	// if _, err := toml.DecodeFile("conf.toml", &appCfg); err != nil {
-	// 	fmt.Println("Error!")
-	// }
-
-	// if err != nil {
-	// 	fmt.Println("Error ", err.Error())
-	// }
-
-	// cfg.CurrentFile = appCfg.FileURI
 
 	win := a.NewWindow("Sniper")
 
@@ -67,9 +53,9 @@ func main() {
 	cfg.winMove = winMove
 
 	winGrMove := a.NewWindow("Group move")
-	l_group_move := cfg.makeUIGrMove(winGrMove)
+	l_group_move, filterGrMove, btnFilterGrMove := cfg.makeUIGrMove(winGrMove)
 	winGrMove.Resize(fyne.Size{Width: 320, Height: 400})
-	winGrMove.SetContent(l_group_move)
+	winGrMove.SetContent(container.NewVSplit(container.NewVBox(filterGrMove, btnFilterGrMove), l_group_move))
 
 	cfg.winGrMove = winGrMove
 
@@ -92,11 +78,11 @@ func main() {
 
 	// cfg.winMove.CenterOnScreen()
 
-	filter, btn, edit, l_snips, l_groups := cfg.makeUI()
+	filter, btn, edit, l_snips, l_groups, editToolTip := cfg.makeUI()
 	cfg.createMenuItems(win)
 
 	// set the content of the window
-	win.SetContent(container.NewHSplit(container.NewVSplit(l_groups, container.NewVBox(filter, btn)), container.NewHSplit(l_snips, edit)))
+	win.SetContent(container.NewHSplit(container.NewVSplit(l_groups, container.NewVBox(filter, btn)), container.NewHSplit(l_snips, container.NewVSplit(editToolTip, container.NewHScroll(edit)))))
 
 	winNewGroupName := a.NewWindow("New name")
 	NewNameEdit, NewNameBtn := cfg.makeUINewName(winNewGroupName)

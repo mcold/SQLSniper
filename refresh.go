@@ -13,6 +13,8 @@ func (app *config) refreshFilter(token string) {
 func (app *config) refreshSnip(id int) {
 	app.WhoActive = "Snip"
 	app.IDSnip = id
+	app.EditToolTip.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Description)
+	app.EditToolTip.Refresh()
 	app.EditWidget.SetText(app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Code)
 	app.EditWidget.Refresh()
 }
@@ -39,6 +41,15 @@ func (app *config) refreshGroupMove(id int) {
 func (app *config) refreshGroupInsSnip(id int) {
 	app.WhoActive = "GroupInsSnip"
 	app.IDGroupNewSnip = id
+}
+
+func (app *config) refreshGroupMoveSnip(id int) {
+	app.WhoActive = "GroupMoveSnip"
+	app.IDGroupSnipMove = id
+}
+
+func (app *config) refreshEditToolTip(str string) {
+	app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Description = str
 }
 
 func (app *config) refreshEdit(str string) {

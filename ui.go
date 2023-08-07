@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func (app *config) makeUI() (*widget.Entry, *widget.Button, *widget.Entry, *widget.List, *widget.List) {
+func (app *config) makeUI() (*widget.Entry, *widget.Button, *widget.Entry, *widget.List, *widget.List, *widget.Entry) {
 
 	app.Snips = get_snippets("UserSnippets.xml")
 
@@ -16,6 +16,7 @@ func (app *config) makeUI() (*widget.Entry, *widget.Button, *widget.Entry, *widg
 
 	filter := widget.NewEntry()
 	btn := widget.NewButton("Find", func() { app.searchFilter(app.FilterWidget.Text) })
+	editToolTip := widget.NewEntry()
 	edit := widget.NewMultiLineEntry()
 
 	edit.Wrapping = fyne.TextWrapWord
@@ -47,15 +48,17 @@ func (app *config) makeUI() (*widget.Entry, *widget.Button, *widget.Entry, *widg
 	l_groups.OnSelected = app.refreshGroup
 	l_snips.OnSelected = app.refreshSnip
 	filter.OnChanged = app.refreshFilter
+	editToolTip.OnChanged = app.refreshEditToolTip
 	edit.OnChanged = app.refreshEdit
 
 	app.FilterWidget = filter
 	app.Btn = btn
+	app.EditToolTip = editToolTip
 	app.EditWidget = edit
 	app.ListSnip = l_snips
 	app.ListGroup = l_groups
 
-	return filter, btn, edit, l_snips, l_groups
+	return filter, btn, edit, l_snips, l_groups, editToolTip
 }
 
 func (app *config) makeUI_move(win fyne.Window) *widget.List {
@@ -71,12 +74,12 @@ func (app *config) makeUI_move(win fyne.Window) *widget.List {
 		},
 	)
 
-	l_groups.OnSelected = app.refreshGroupInsSnip
+	l_groups.OnSelected = app.refreshGroupMoveSnip
 
 	return l_groups
 }
 
-func (app *config) makeUIGrMove(win fyne.Window) *widget.List {
+func (app *config) makeUIGrMove(win fyne.Window) (*widget.List, *widget.Entry, *widget.Button) {
 	lGroups := widget.NewList(
 		func() int {
 			return len(app.Snips.Groups)
@@ -89,9 +92,15 @@ func (app *config) makeUIGrMove(win fyne.Window) *widget.List {
 		},
 	)
 
+	filter := widget.NewEntry()
+	app.FilterMoveGr = filter
+	btn := widget.NewButton("Find", func() { app.searchFilterMoveToGroup(app.FilterMoveGr.Text) })
+
 	lGroups.OnSelected = app.refreshGroupMove
 
-	return lGroups
+	app.ListGroupMoveToGr = lGroups
+
+	return lGroups, filter, btn
 }
 
 func (app *config) makeUI_groupIns(win fyne.Window) (*widget.Label, *widget.Entry, *widget.Button) {
@@ -124,13 +133,30 @@ func (app *config) makeUINewName(win fyne.Window) (*widget.Entry, *widget.Button
 			{
 				app.Snips.Groups[app.IDGroup].Snips[app.IDSnip].Name = edit.Text
 				app.resortSnips()
+
+				for i := range app.Snips.Groups[app.IDGroup].Snips {
+					if app.Snips.Groups[app.IDGroup].Snips[i].Name == edit.Text {
+						app.IDSnip = i
+						break
+					}
+				}
+
 				app.ListSnip.Refresh()
 				app.ListSnip.Select(app.IDSnip)
 			}
 		case "Group":
 			{
 				app.Snips.Groups[app.IDGroup].Category = edit.Text
+
 				app.resortGroups()
+
+				for i := range app.Snips.Groups {
+					if app.Snips.Groups[i].Category == edit.Text {
+						app.IDGroup = i
+						break
+					}
+				}
+
 				app.ListGroup.Refresh()
 				app.ListGroup.Select(app.IDGroup)
 			}
@@ -239,4 +265,23 @@ func (app *config) searchFilter(token string) {
 
 	app.refreshGroup(0)
 	app.ListGroup.Select(0)
+}
+
+func (app *config) searchFilterMoveToGroup(token string) {
+	// TODO: debug filter
+	var newSnippets Snippets
+
+	for _, gel := range app.Snips.Groups {
+		if strings.Contains(strings.ToLower((gel.Category)), strings.ToLower(token)) {
+			newSnippets.Groups = append(newSnippets.Groups, gel)
+		}
+	}
+
+	if len(newSnippets.Groups) != 0 {
+		app.Snips.Groups = newSnippets.Groups
+		app.ListGroupMoveToGr.Refresh()
+	} else {
+		app.Snips = app.SnipsDefault
+		app.FilterWidget.SetText("")
+	}
 }

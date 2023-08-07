@@ -196,7 +196,7 @@ func (app *config) setKeysMove(win fyne.Window) {
 						// fmt.Println("THE END!!!")
 						if app.IDGroup+1 > app.ListGroup.Length() {
 							app.Snips.Groups = app.Snips.Groups[app.IDGroup:]
-							app.IDGroupMove = app.IDGroupMove - 1
+							app.IDGroupSnipMove = app.IDGroupSnipMove - 1
 						} else {
 							left_group_arr := app.Snips.Groups[:app.IDGroup]
 							right_group_arr := app.Snips.Groups[app.IDGroup+1:]
@@ -215,10 +215,17 @@ func (app *config) setKeysMove(win fyne.Window) {
 						app.Snips.Groups[app.IDGroup].Snips = append(left_arr, right_arr...)
 					}
 				}
-				fmt.Println("IDGroupMove: " + strconv.Itoa(app.IDGroupMove))
-				app.Snips.Groups[app.IDGroupMove].Snips = append(app.Snips.Groups[app.IDGroupMove].Snips, snip)
-				app.refreshGroup(app.IDGroupMove)
-				app.ListGroup.Refresh()
+				fmt.Println("IDGroupSnipMove: " + strconv.Itoa(app.IDGroupSnipMove))
+				app.Snips.Groups[app.IDGroupSnipMove].Snips = append(app.Snips.Groups[app.IDGroupSnipMove].Snips, snip)
+				app.refreshGroup(app.IDGroupSnipMove)
+				app.IDGroup = app.IDGroupSnipMove
+				app.ListSnip.UnselectAll()
+				app.ListGroup.Select(app.IDGroup)
+				app.IDSnip = len(app.Snips.Groups[app.IDGroup].Snips) - 1
+				// app.IDSnip = 0
+				app.ListSnip.Select(app.IDSnip)
+				// app.ListGroup.Refresh()
+				// app.ListSnip.Refresh()
 				win.Hide()
 
 			}
@@ -274,13 +281,33 @@ func (app *config) setKeysGrMove(win fyne.Window) {
 		switch k.Name {
 		case "KP_Enter":
 			{
+				app.Snips.Groups = app.GroupsDefault
+
 				for i := range app.Snips.Groups[app.IDGroup].Snips {
 					app.Snips.Groups[app.IDGroupMove].Snips = append(app.Snips.Groups[app.IDGroupMove].Snips, app.Snips.Groups[app.IDGroup].Snips[i])
 				}
 
-				app.Snips.Groups = append(app.Snips.Groups[:app.IDGroup], app.Snips.Groups[app.IDGroup+1:]...)
-				app.refreshGroup(app.IDGroupMove)
+				groups := make([]Group, 0)
+				cat_move_name := app.Snips.Groups[app.IDGroupMove].Category
+
+				for i := range app.Snips.Groups {
+					if app.Snips.Groups[i].Category != app.Snips.Groups[app.IDGroup].Category {
+						groups = append(groups, app.Snips.Groups[i])
+					}
+				}
+
+				fmt.Println(len(groups))
+				app.Snips.Groups = groups
+
+				for i := range app.Snips.Groups {
+					if app.Snips.Groups[i].Category == cat_move_name {
+						app.IDGroup = i
+						break
+					}
+				}
 				app.ListGroup.Refresh()
+				app.ListSnip.UnselectAll()
+				app.ListSnip.Refresh()
 				win.Hide()
 
 			}
@@ -290,9 +317,27 @@ func (app *config) setKeysGrMove(win fyne.Window) {
 					app.Snips.Groups[app.IDGroupMove].Snips = append(app.Snips.Groups[app.IDGroupMove].Snips, app.Snips.Groups[app.IDGroup].Snips[i])
 				}
 
-				app.Snips.Groups = append(app.Snips.Groups[:app.IDGroup], app.Snips.Groups[app.IDGroup+1:]...)
-				app.refreshGroup(app.IDGroupMove)
+				groups := make([]Group, 0)
+				cat_move_name := app.Snips.Groups[app.IDGroupMove].Category
+
+				for i := range app.Snips.Groups {
+					if app.Snips.Groups[i].Category != app.Snips.Groups[app.IDGroup].Category {
+						groups = append(groups, app.Snips.Groups[i])
+					}
+				}
+
+				fmt.Println(len(groups))
+				app.Snips.Groups = groups
+
+				for i := range app.Snips.Groups {
+					if app.Snips.Groups[i].Category == cat_move_name {
+						app.IDGroup = i
+						break
+					}
+				}
 				app.ListGroup.Refresh()
+				app.ListSnip.UnselectAll()
+				app.ListSnip.Refresh()
 				win.Hide()
 			}
 
