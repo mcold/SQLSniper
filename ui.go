@@ -79,7 +79,7 @@ func (app *config) makeUI_move(win fyne.Window) *widget.List {
 	return l_groups
 }
 
-func (app *config) makeUIGrMove(win fyne.Window) (*widget.List, *widget.Entry, *widget.Button) {
+func (app *config) makeUIGrMove(win fyne.Window) *widget.List {
 	lGroups := widget.NewList(
 		func() int {
 			return len(app.Snips.Groups)
@@ -94,13 +94,12 @@ func (app *config) makeUIGrMove(win fyne.Window) (*widget.List, *widget.Entry, *
 
 	filter := widget.NewEntry()
 	app.FilterMoveGr = filter
-	btn := widget.NewButton("Find", func() { app.searchFilterMoveToGroup(app.FilterMoveGr.Text) })
 
 	lGroups.OnSelected = app.refreshGroupMove
 
 	app.ListGroupMoveToGr = lGroups
 
-	return lGroups, filter, btn
+	return lGroups
 }
 
 func (app *config) makeUI_groupIns(win fyne.Window) (*widget.Label, *widget.Entry, *widget.Button) {
@@ -260,8 +259,6 @@ func (app *config) searchFilter(token string) {
 	}
 	app.IDGroup = 0
 	app.IDSnip = 0
-	app.ListGroup.UnselectAll()
-	app.ListSnip.UnselectAll()
 
 	app.refreshGroup(0)
 	app.ListGroup.Select(0)

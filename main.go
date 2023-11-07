@@ -53,9 +53,10 @@ func main() {
 	cfg.winMove = winMove
 
 	winGrMove := a.NewWindow("Group move")
-	l_group_move, filterGrMove, btnFilterGrMove := cfg.makeUIGrMove(winGrMove)
+	l_group_move := cfg.makeUIGrMove(winGrMove)
 	winGrMove.Resize(fyne.Size{Width: 320, Height: 400})
-	winGrMove.SetContent(container.NewVSplit(container.NewVBox(filterGrMove, btnFilterGrMove), l_group_move))
+	// winGrMove.SetContent(container.NewVSplit(container.NewVBox(filterGrMove, btnFilterGrMove), l_group_move))
+	winGrMove.SetContent(l_group_move)
 
 	cfg.winGrMove = winGrMove
 
