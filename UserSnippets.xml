@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <snippets>
    <group category="PG" language="PLSQL">
-      <snippet name="pg_example" description="">
+      <snippet name="pg_1" description="some desc pg_1">
          <code>
             <![CDATA[
 DO $$
@@ -12,230 +12,38 @@ $$;
 ]]>
          </code>
       </snippet>
-      <snippet name="airport разобрать скурпулезно" description="">
-         <code>
-            <![CDATA[explain (costs off)
-    SELECT *
-      FROM flights f
-      JOIN airports_data dep ON f.departure_airport = dep.airport_code
-    ORDER BY dep.airport_code;
-    
-explain (costs off)
-    SELECT *
-      FROM flights f
-      JOIN airports_data dep ON f.departure_airport = dep.airport_code;
-    --ORDER BY dep.airport_code;
-    
-select *
-  from pg_index;
-
--- columns  
-SELECT table_name, 
-       column_name, 
-       data_type, 
-       character_maximum_length, 
-       column_default, 
-       is_nullable
-FROM information_schema.columns 
-WHERE table_name = 'airports_data';
-
--- ddl generation
-SELECT                                          
-  'CREATE TABLE ' || relname || E'\n(\n' ||
-  array_to_string(
-    array_agg(
-      '    ' || column_name || ' ' ||  type || ' '|| not_null
-    )
-    , E',\n'
-  ) || E'\n);\n'
-from
-(
-  SELECT 
-    c.relname, a.attname AS column_name,
-    pg_catalog.format_type(a.atttypid, a.atttypmod) as type,
-    case 
-      when a.attnotnull
-    then 'NOT NULL'
-    else 'NULL'
-    END as not_null 
-  FROM pg_class c,
-   pg_attribute a,
-   pg_type t
-   WHERE c.relname = 'airports_data'
-   AND a.attnum > 0
-   AND a.attrelid = c.oid
-   AND a.atttypid = t.oid
- ORDER BY a.attnum
-) as tabledefinition
-group by relname
-;
-
-select pg_get_viewdef('airports_data'::regclass, true);
-
--- index DDL by table
-SELECT pi.*,
-      pg_get_indexdef(indexrelid) AS index_query
-FROM pg_index pi 
-WHERE  indrelid = 'airports_data'::regclass;
-
-SELECT pg_get_indexdef('airports_data'::regclass);
-
-select *
-  from pg_class
-  where oid in (16703, 16652);
-  
-  
-SELECT pg_get_indexdef('airports_data_pkey'::regclass);
-
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="cat_name" language="PLSQL">
-      <snippet name="d_snip" description="">
+      <snippet name="pg_2" description="some desc pg_2">
          <code>
             <![CDATA[
-DDDDD
-]]>
-         </code>
-      </snippet>
-      <snippet name="b_snip" description="some aaa description">
-         <code>
-            <![CDATA[
-AAAAAA
-]]>
-         </code>
-      </snippet>
-      <snippet name="a_snip" description="some bbb description">
-         <code>
-            <![CDATA[
-BBBBB
-]]>
-         </code>
-      </snippet>
-   <snippet name="c_snip" description="some ccc description">
-         <code>
-            <![CDATA[
-CCCCC
-
+DO $$
 BEGIN
-  DO SOMETHING;
+    RAISE NOTICE 'something else' END;
+    RAISE NOTICE 'do it anyway' END;
 END;
+$$;
 ]]>
          </code>
       </snippet>
    </group>
-   <group category="TD" language="PLSQL">
-      <snippet name="1_snip" description="">
+   <group category="MS" language="PLSQL">
+      <snippet name="snip_1" description="some desc snip_1">
          <code>
             <![CDATA[
 11111
 ]]>
          </code>
       </snippet>
-      <snippet name="2_snip" description="">
+      <snippet name="snip_2" description="some desc snip_2">
          <code>
             <![CDATA[
-222222
+222
 ]]>
          </code>
       </snippet>
-      <snippet name="3_snip" description="">
+      <snippet name="snip_3" description="some desc snip_3">
          <code>
             <![CDATA[
-33333
-]]>
-         </code>
-      </snippet>
-   <snippet name="4_snip" description="">
-         <code>
-            <![CDATA[
-444444444
-
-BEGIN
-  DO SOMETHING;
-END;
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 1" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 2" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 3" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 4" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 5" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 6" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 7" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 8" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
-]]>
-         </code>
-      </snippet>
-   </group>
-   <group category="MS 9" language="PLSQL">
-      <snippet name="1_snip" description="">
-         <code>
-            <![CDATA[
-11111
+333
 ]]>
          </code>
       </snippet>
